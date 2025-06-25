@@ -1,32 +1,87 @@
 ﻿@page "/"
+@using BlazorNotes.Services
 @using BlazorNotes.DataModels
+@inject INoteService NoteService
+@inject NavigationManager Nav
 
 <PageTitle>BlazorNotes</PageTitle>
 
 <div class="main-container">
     <div class="header">
+        <p>DEBUG: showAddForm = @showAddForm</p>
         <h1>BlazorNotes</h1>
-        <button class="add-button">+</button>
+        <button class="add-button" @onclick="() => ToggleAddNoteForm()">+</button>
     </div>
 
-    <div class="notes-list">
-        @foreach (var testNote in SampleNotes)
-        {
-            <div class="note-card">
-                <div class="note-header">
-                    <span class="note-title">@testNote.Title</span>
-                    <span class="note-date">@testNote.CreationDate.ToShortDateString()</span>
-                </div>
-                <div class="note-preview">@testNote.Content.Substring(0, Math.Min(100, testNote.Content.Length))...</div>
+    @if (showAddForm)
+    {
+        <div class="note-card">
+            <input @bind="newNoteTitle" placeholder="Tytuł nowej notatki" class="input-title" />
+            <div class="button-group">
+                <button class="create-button" @onclick="CreateNote">Utwórz</button>
+                <button class="cancel-button" @onclick="ToggleAddNoteForm">Anuluj</button>
             </div>
+        </div>
+    }
+
+    <div class="notes-list">
+        @if (notes == null)
+        {
+            <p>Ładowanie...</p>
+        }
+        else
+        {
+            @foreach (var note in notes)
+            {
+                var noteUrl = $"/note/{note.Id}";
+                <div class="note-card clickable" @onclick="() => Nav.NavigateTo(noteUrl)">
+                    <div class="note-header">
+                        <span class="note-title">@note.Title</span>
+                        <span class="note-date">@note.CreationDate.ToShortDateString()</span>
+                    </div>
+                    <div class="note-preview">@note.Content?.Split('\n').FirstOrDefault()</div>
+                </div>
+            }
         }
     </div>
 </div>
 
 @code {
-    private List<Note> SampleNotes = new()
+    private List<Note>? notes;
+    private bool showAddForm = false;
+    private string newNoteTitle = string.Empty;
+
+    protected override async Task OnInitializedAsync()
     {
-        new Note { Id = 1, Title = "Zakupy", Content = "Kupić oprogramowanie firmy KT-SOFT :)", CreationDate = DateTime.Now.AddDays(-1) },
-        new Note { Id = 2, Title = "Pomysł na projekt", Content = "Aplikacja do tworzenia, edytowania i dodawania notatek", CreationDate = DateTime.Now }
-    };
+        notes = await NoteService.GetAllAsync();
+        StateHasChanged();
+    }
+
+    private void ToggleAddNoteForm()
+    {
+        showAddForm = !showAddForm;
+        newNoteTitle = string.Empty;
+        StateHasChanged();
+    }
+
+    private async Task CreateNote()
+    {
+        if (!string.IsNullOrWhiteSpace(newNoteTitle))
+        {
+            var newNote = new Note
+            {
+                Title = newNoteTitle,
+                Content = "",
+                CreationDate = DateTime.Now
+            };
+
+            await NoteService.AddAsync(newNote);
+            notes = await NoteService.GetAllAsync();
+            showAddForm = false;
+
+            // Znajdź nową notatkę i przenieś do niej
+            Nav.NavigateTo($"/note/{newNote.Id}");
+        }
+    }
+
 }
