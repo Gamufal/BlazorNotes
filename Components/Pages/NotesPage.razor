@@ -1,0 +1,32 @@
+﻿@page "/"
+@using BlazorNotes.DataModels
+
+<PageTitle>BlazorNotes</PageTitle>
+
+<div class="main-container">
+    <div class="header">
+        <h1>BlazorNotes</h1>
+        <button class="add-button">+</button>
+    </div>
+
+    <div class="notes-list">
+        @foreach (var testNote in SampleNotes)
+        {
+            <div class="note-card">
+                <div class="note-header">
+                    <span class="note-title">@testNote.Title</span>
+                    <span class="note-date">@testNote.CreationDate.ToShortDateString()</span>
+                </div>
+                <div class="note-preview">@testNote.Content.Substring(0, Math.Min(100, testNote.Content.Length))...</div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Note> SampleNotes = new()
+    {
+        new Note { Id = 1, Title = "Zakupy", Content = "Kupić oprogramowanie firmy KT-SOFT :)", CreationDate = DateTime.Now.AddDays(-1) },
+        new Note { Id = 2, Title = "Pomysł na projekt", Content = "Aplikacja do tworzenia, edytowania i dodawania notatek", CreationDate = DateTime.Now }
+    };
+}
