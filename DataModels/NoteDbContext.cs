@@ -10,7 +10,5 @@ namespace BlazorNotes.DataModels
         }
 
         public DbSet<Note> Notes => Set<Note>();
-        {
-        }
     }
 }
