@@ -1,4 +1,8 @@
 using BlazorNotes.Components;
+using BlazorNotes.DataModels;
+using BlazorNotes.Services;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace BlazorNotes
 {
@@ -11,6 +15,12 @@ namespace BlazorNotes
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+            builder.Services.AddDbContext<NoteDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<INoteService, NoteService>();
+
+
 
             var app = builder.Build();
 
