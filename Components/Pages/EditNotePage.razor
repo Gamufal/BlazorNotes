@@ -1,0 +1,38 @@
+﻿@page "/note/{Id:int}"
+@using BlazorNotes.DataModels
+@using BlazorNotes.Services
+@inject INoteService NoteService
+@inject NavigationManager Nav
+
+<h2>@note?.Title</h2>
+
+@if (note != null)
+{
+    <textarea @bind="note.Content" class="note-editor"></textarea>
+    <br />
+    <button class="save-button" @onclick="SaveNote">Zapisz zmiany</button>
+}
+else
+{
+    <p>Ładowanie...</p>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Note? note;
+
+    protected override async Task OnInitializedAsync()
+    {
+        note = await NoteService.GetByIdAsync(Id);
+    }
+
+    private async Task SaveNote()
+    {
+        if (note != null)
+        {
+            await NoteService.UpdateAsync(note);
+            Nav.NavigateTo("/");
+        }
+    }
+}
