@@ -3,29 +3,36 @@
 @using BlazorNotes.Services
 @inject INoteService NoteService
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <div class="main-container">
+    @if (note != null)
+    {
+        <EditForm Model="@note" OnValidSubmit="SaveNote">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-@if (note != null)
-{
-    <div class="note-header-bar">
-        <h2>@note.Title</h2>
-        <button class="delete-button" @onclick="ConfirmDelete">-</button>
-    </div>
-    <div class="note-created">Utworzono: @note.CreationDate.ToString("g")</div>
+            <div class="note-header-bar">
+                <h2>@note.Title</h2>
+                <button class="delete-button" type="button" @onclick="ConfirmDelete">-</button>
+            </div>
 
-    <textarea @bind="note.Content" class="note-editor"></textarea>
-    <br />
-    <button class="save-button" @onclick="SaveNote">Zapisz zmiany</button>
-}
-else
-{
-    <p>Ładowanie...</p>
-}
+            <div class="note-created">Utworzono: @note.CreationDate.ToString("g")</div>
 
+            <textarea class="note-editor" @bind="note.Content"></textarea>
+
+            <br />
+            <button class="save-button" type="submit">Zapisz zmiany</button>
+        </EditForm>
+    }
+    else
+    {
+        <p>Ładowanie notatki...</p>
+    }
 </div>
+
 <footer>
-    <p>Website crated by Kamil Kotorc</p>
+    <p>Website created by Kamil Kotorc</p>
 </footer>
 
 @code {
@@ -49,13 +56,13 @@ else
 
     private async Task ConfirmDelete()
     {
+        if (note == null) return;
+
         var confirmed = await JS.InvokeAsync<bool>("confirm", "Czy na pewno chcesz usunąć tę notatkę?");
-        if (confirmed && note != null)
+        if (confirmed)
         {
             await NoteService.DeleteAsync(note.Id);
             Nav.NavigateTo("/");
         }
     }
-
-    [Inject] IJSRuntime JS { get; set; } = default!;
 }
