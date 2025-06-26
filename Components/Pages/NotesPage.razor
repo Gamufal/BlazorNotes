@@ -56,28 +56,38 @@
 @code {
     private List<Note>? notes;
     private bool showAddForm = false;
-    private Note newNote = new();
+    private string newNoteTitle = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         notes = await NoteService.GetAllAsync();
+        StateHasChanged();
     }
 
     private void ToggleAddNoteForm()
     {
         showAddForm = !showAddForm;
-        newNote = new Note(); // reset formularza
+        newNoteTitle = string.Empty;
+        StateHasChanged();
     }
 
     private async Task CreateNote()
     {
-        newNote.CreationDate = DateTime.Now;
-        newNote.Content = newNote.Content ?? "";
+        if (!string.IsNullOrWhiteSpace(newNoteTitle))
+        {
+            var newNote = new Note
+            {
+                Title = newNoteTitle,
+                Content = "",
+                CreationDate = DateTime.Now
+            };
 
-        await NoteService.AddAsync(newNote);
-        notes = await NoteService.GetAllAsync();
-        showAddForm = false;
+            await NoteService.AddAsync(newNote);
+            notes = await NoteService.GetAllAsync();
+            showAddForm = false;
 
-        Nav.NavigateTo($"/note/{newNote.Id}");
+            Nav.NavigateTo($"/note/{newNote.Id}");
+        }
     }
+
 }
