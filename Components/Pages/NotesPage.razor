@@ -82,7 +82,6 @@
             notes = await NoteService.GetAllAsync();
             showAddForm = false;
 
-            // Znajdź nową notatkę i przenieś do niej
             Nav.NavigateTo($"/note/{newNote.Id}");
         }
     }

@@ -4,7 +4,7 @@
 @inject INoteService NoteService
 @inject NavigationManager Nav
 
-<h2>@note?.Title</h2>
+<div class="main-container">
 
 @if (note != null)
 {
@@ -22,6 +22,11 @@ else
 {
     <p>Ładowanie...</p>
 }
+
+</div>
+<footer>
+    <p>Website crated by Kamil Kotorc</p>
+</footer>
 
 @code {
     [Parameter] public int Id { get; set; }
