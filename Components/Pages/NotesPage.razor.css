@@ -87,16 +87,6 @@ footer {
     font-size: 0.95rem;
 }
 
-.input-title {
-    width: 100%-10px;
-    background-color: #f0f8ff;
-    padding: 0.5rem;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
 .button-group {
     display: flex;
     gap: 0.5rem;

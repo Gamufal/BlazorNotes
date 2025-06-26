@@ -12,6 +12,7 @@ h1:focus {
 
 .validation-message {
     color: #e50000;
+    font-family: sans-serif;
 }
 
 .blazor-error-boundary {
@@ -26,4 +27,14 @@ h1:focus {
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
+}
+
+.input-title {
+    width: 100%-10px;
+    background-color: #f0f8ff;
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }

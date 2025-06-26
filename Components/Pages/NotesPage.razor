@@ -15,13 +15,17 @@
 
     @if (showAddForm)
     {
-        <div class="note-card add-card">
-            <input @bind="newNoteTitle" placeholder="Tytuł nowej notatki" class="input-title" />
-            <div class="button-group">
-                <button class="create-button" @onclick="CreateNote">Utwórz</button>
-                <button class="cancel-button" @onclick="ToggleAddNoteForm">Anuluj</button>
+        <EditForm Model="@newNote" OnValidSubmit="CreateNote">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="note-card add-card">
+                <InputText @bind-Value="newNote.Title" placeholder="Tytuł nowej notatki" class="input-title" />
+                <div class="button-group">
+                    <button class="create-button" type="submit">Utwórz</button>
+                    <button class="cancel-button" type="button" @onclick="ToggleAddNoteForm">Anuluj</button>
+                </div>
             </div>
-        </div>
+        </EditForm>
     }
 
     <div class="notes-list">
@@ -52,38 +56,28 @@
 @code {
     private List<Note>? notes;
     private bool showAddForm = false;
-    private string newNoteTitle = string.Empty;
+    private Note newNote = new();
 
     protected override async Task OnInitializedAsync()
     {
         notes = await NoteService.GetAllAsync();
-        StateHasChanged();
     }
 
     private void ToggleAddNoteForm()
     {
         showAddForm = !showAddForm;
-        newNoteTitle = string.Empty;
-        StateHasChanged();
+        newNote = new Note(); // reset formularza
     }
 
     private async Task CreateNote()
     {
-        if (!string.IsNullOrWhiteSpace(newNoteTitle))
-        {
-            var newNote = new Note
-            {
-                Title = newNoteTitle,
-                Content = "",
-                CreationDate = DateTime.Now
-            };
+        newNote.CreationDate = DateTime.Now;
+        newNote.Content = newNote.Content ?? "";
 
-            await NoteService.AddAsync(newNote);
-            notes = await NoteService.GetAllAsync();
-            showAddForm = false;
+        await NoteService.AddAsync(newNote);
+        notes = await NoteService.GetAllAsync();
+        showAddForm = false;
 
-            Nav.NavigateTo($"/note/{newNote.Id}");
-        }
+        Nav.NavigateTo($"/note/{newNote.Id}");
     }
-
 }
