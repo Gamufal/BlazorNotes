@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using BlazorNotes.DataModels;
 
 namespace BlazorNotes.DataModels
 {
