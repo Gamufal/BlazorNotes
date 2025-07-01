@@ -15,8 +15,11 @@ namespace BlazorNotes
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+            // 2 Context needed to execute migration 
+            builder.Services.AddDbContext<SQLServerDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
             builder.Services.AddDbContext<NoteDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")));
 
             builder.Services.AddScoped<INoteService, NoteService>();
 
