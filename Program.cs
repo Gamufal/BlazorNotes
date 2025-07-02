@@ -8,24 +8,24 @@ namespace BlazorNotes
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // Razor Components 
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
-            // 2 Context needed to execute migration 
-            builder.Services.AddDbContext<SQLServerDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
+            // SQLite Database Context
             builder.Services.AddDbContext<NoteDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")));
-
+            // NoteService Interface
             builder.Services.AddScoped<INoteService, NoteService>();
-
-            // DB Migrator 
-            builder.Services.AddTransient<NoteDbMigrator>();
-
+            // DB Migrator - Not needed after migration
+            //builder.Services.AddTransient<NoteDbMigrator>();
+            // OLD SQL Server Database Context
+            //builder.Services.AddDbContext<SQLServerDbContext>(options =>
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
 
             var app = builder.Build();
 
@@ -45,11 +45,12 @@ namespace BlazorNotes
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var migrator = scope.ServiceProvider.GetRequiredService<NoteDbMigrator>();
-                await migrator.MigrateAsync();
-            }
+            // OLD initialization of database migration at startup
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var migrator = scope.ServiceProvider.GetRequiredService<NoteDbMigrator>();
+            //    await migrator.MigrateAsync();
+            //}
 
             app.Run();
         }
