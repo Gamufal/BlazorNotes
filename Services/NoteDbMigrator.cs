@@ -16,16 +16,18 @@ namespace BlazorNotes.Services
 
         public async Task MigrateAsync()
         {
+            await _targetDb.Database.MigrateAsync();
+
             var existingData = await _targetDb.Notes.AnyAsync();
 
-            if(existingData)
+            if(!existingData)
             {
-                return;
+                var noteData = await _sourceDb.Notes.ToListAsync();
+                await _targetDb.Notes.AddRangeAsync(noteData);
+                await _targetDb.SaveChangesAsync();
             }
 
-            var noteData = await _sourceDb.Notes.ToListAsync();
-            await _targetDb.Notes.AddRangeAsync(noteData);
-            await _targetDb.SaveChangesAsync();
+            
         }
     }
 }
