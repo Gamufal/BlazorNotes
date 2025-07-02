@@ -14,7 +14,7 @@ namespace BlazorNotes.Services
 
         public async Task<List<Note>> GetAllAsync()
         {
-            return await _context.Notes.OrderByDescending(x => x.CreationDate).ToListAsync();
+            return await _context.Notes.OrderByDescending(x => x.ModifiedDate).ToListAsync();
         }
 
         public async Task<Note?> GetByIdAsync(int id)

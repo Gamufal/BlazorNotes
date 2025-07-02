@@ -17,12 +17,14 @@
                 <button class="delete-button" type="button" @onclick="ConfirmDelete">-</button>
             </div>
 
+            <div class="note-modified">Zmodyfikowano: @note.ModifiedDate.ToString("g")</div>
             <div class="note-created">Utworzono: @note.CreationDate.ToString("g")</div>
 
             <textarea class="note-editor" @bind="note.Content"></textarea>
 
             <br />
             <button class="save-button" type="submit">Zapisz zmiany</button>
+            <button class="cancel-button" type="button" @onclick="DiscardNote">Anuluj</button>
         </EditForm>
     }
     else
@@ -39,17 +41,37 @@
     [Parameter] public int Id { get; set; }
 
     private Note? note;
+    private String originalContent = "";
 
     protected override async Task OnInitializedAsync()
     {
         note = await NoteService.GetByIdAsync(Id);
+        if (note != null)
+        {
+            originalContent = note.Content;
+        }
     }
 
     private async Task SaveNote()
     {
         if (note != null)
         {
+            note.ModifiedDate = DateTime.Now;
             await NoteService.UpdateAsync(note);
+            Nav.NavigateTo("/");
+        }
+    }
+
+    private async Task DiscardNote()
+    {
+        if (note == null)
+        {
+            return;
+        }
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "Czy na pewno chcesz anulować zmiany?");
+        if (confirmed)
+        {
+            note.Content = originalContent;
             Nav.NavigateTo("/");
         }
     }

@@ -41,7 +41,7 @@
                 <div class="note-card clickable" @onclick="() => Nav.NavigateTo(noteUrl)">
                     <div class="note-header">
                         <span class="note-title">@note.Title</span>
-                        <span class="note-date">@note.CreationDate.ToShortDateString()</span>
+                        <span class="note-date">@note.ModifiedDate.ToShortDateString()</span>
                     </div>
                     <div class="note-preview">@note.Content?.Split('\n').FirstOrDefault()</div>
                 </div>
@@ -50,7 +50,7 @@
     </div>
 </div>
 <footer>
-    <p>Website crated by Kamil Kotorc</p>
+    <p>Website created by Kamil Kotorc</p>
 </footer>
 
 @code {

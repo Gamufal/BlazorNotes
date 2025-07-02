@@ -14,5 +14,6 @@ namespace BlazorNotes.DataModels
         public string Content { get; set; } = string.Empty;
 
         public DateTime CreationDate { get; set; } = DateTime.Now;
+        public DateTime ModifiedDate { get; set; } = DateTime.Now;
     }
 }
