@@ -1,5 +1,4 @@
 # BlazorNotes
-
 Jest to lekka aplikacja do tworzenia i zarządzania notatkami.
 
 ---
